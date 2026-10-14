@@ -1,0 +1,6 @@
+.env
+.venv/
+.deepeval/
+__pycache__/
+bm25_index.pkl
+chroma_db/
