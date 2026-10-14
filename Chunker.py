@@ -2,9 +2,24 @@ from dotenv import load_dotenv
 import voyageai
 import re
 
-
 class Chunker:
-    def __init__(self, embedding_model="voyage-3-large"):
+    def __init__(self):
+        self.chunker = VoyageAIChunker()
+
+    def chunk_by_char(self, text, chunk_size=150, chunk_overlap=20):
+        return self.chunker.chunk_by_char(text, chunk_size, chunk_overlap)
+
+    def chunk_by_section(self, document_text):
+        return self.chunker.chunk_by_section(document_text)
+    
+    def chunk_by_sentence(self, text, max_sentences_per_chunk=5, overlap_sentences=1):
+        return self.chunker.chunk_by_sentence(text, max_sentences_per_chunk, overlap_sentences)
+    
+    def generate_embedding(self, text, input_type="query"):
+        return self.chunker.generate_embedding(text, input_type)
+
+class VoyageAIChunker:
+    def __init__(self, embedding_model="voyage-4-lite"):
         self.embedding_model = embedding_model
         self._client = None
 
@@ -16,8 +31,8 @@ class Chunker:
             self._client = voyageai.Client()
         return self._client
 
-    @staticmethod
-    def chunk_by_char(text, chunk_size=150, chunk_overlap=20):
+    # @staticmethod
+    def chunk_by_char(self, text, chunk_size=150, chunk_overlap=20):
         if chunk_size <= 0:
             raise ValueError("chunk_size must be positive")
         if not 0 <= chunk_overlap < chunk_size:
@@ -37,13 +52,13 @@ class Chunker:
 
         return chunks
 
-    @staticmethod
-    def chunk_by_section(document_text):
+    # @staticmethod
+    def chunk_by_section(self, document_text):
         pattern = r"\n## "
         return re.split(pattern, document_text)
 
-    @staticmethod
-    def chunk_by_sentence(text, max_sentences_per_chunk=5, overlap_sentences=1):
+    # @staticmethod
+    def chunk_by_sentence(self, text, max_sentences_per_chunk=5, overlap_sentences=1):
         if max_sentences_per_chunk <= 0:
             raise ValueError("max_sentences_per_chunk must be positive")
         if not 0 <= overlap_sentences < max_sentences_per_chunk:
