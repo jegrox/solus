@@ -54,7 +54,9 @@ class VoyageAIChunker:
 
     # @staticmethod
     def chunk_by_section(self, document_text):
-        pattern = r"\n## "
+        # Split before any markdown heading (# to ######); the lookahead keeps
+        # the heading line at the start of its section
+        pattern = r"\n(?=#{1,6} )"
         return re.split(pattern, document_text)
 
     # @staticmethod

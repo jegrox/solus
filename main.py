@@ -3,6 +3,7 @@ import re
 import sys
 from pathlib import Path
 import anthropic
+import pymupdf4llm
 from Agent import Agent
 from Chunker import Chunker
 from Retriever import Retriever
@@ -19,6 +20,12 @@ chunker = Chunker()
 retriever = Retriever(VectorIndex(chunker), BM25Index())
 agent = Agent(retriever)
 
+def load_markdown(path):
+    """Return a file's contents as markdown, converting PDFs with pymupdf4llm."""
+    if path.suffix.lower() == ".pdf":
+        return pymupdf4llm.to_markdown(str(path))
+    return path.read_text(encoding="utf-8")
+
 def build_index(force=False):
     # Ingest: one dict per chunk, with metadata for citations.
     # Indexes already on disk (chroma_db/, bm25_index.pkl) are left alone
@@ -27,9 +34,11 @@ def build_index(force=False):
         retriever.reset()
 
     chunks = []
-    for path in Path("data").glob("**/*.md"):
-        text = path.read_text(encoding="utf-8")
-        for i, chunk in enumerate(chunker.chunk_by_sentence(text, 5, 1)):
+    for path in Path("data").glob("**/*"):
+        if path.suffix.lower() not in {".md", ".pdf"}:
+            continue
+        text = load_markdown(path)
+        for i, chunk in enumerate(chunker.chunk_by_section(text)):
             if chunk.strip():
                 chunks.append({"content": chunk, "source": str(path), "chunk": i})
 

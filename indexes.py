@@ -1,10 +1,9 @@
-import math, re
+import re
 import os
 import pickle
 from collections import Counter
 from Chunker import Chunker
 import chromadb
-import uuid
 
 from chromadb import (
     Schema,

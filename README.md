@@ -2,7 +2,7 @@
 1. Clone the repository into your local box.
 2. Install the following dependencies:
    ```
-   pip install anthropic deepeval voyageai rank-bm25 chromadb
+   pip install anthropic deepeval voyageai rank-bm25 chromadb pymupdf4llm
    ```
 ## Set up authentication
 Create a .env file in your local directory and add the following keys. Replace with your personal or organization keys
